@@ -1,30 +1,35 @@
-from todo import ToDoApp      # Import the ToDoApp class from todo.py
+# Import the time module to use sleep function
+import time
 
-app = ToDoApp()               # Create an object of ToDoApp to manage tasks
+# Import get_location function from location.py
+from location import get_location
 
-while True:                   # Infinite loop to keep showing menu until user exits
-    print("\n---- TO DO MENU ----")     # Display menu header
-    print("1. Add Task")                 # Option 1: Add a task
-    print("2. Remove Task")              # Option 2: Remove a task
-    print("3. Show Tasks")               # Option 3: Display all saved tasks
-    print("4. Exit")                     # Option 4: Exit the program
+# Import get_weather function from weather.py
+from weather import get_weather
 
-    choice = input("Enter choice: ")     # Take user’s menu selection
+# Import notify function from notifier.py
+from notifier import notify
 
-    if choice == "1":                     # If user chooses to add a task
-        task = input("Enter task: ")      # Ask for task description
-        app.add_task(task)                # Call method to add task
+# Get user input for city name
+city = input("Enter city name: ")
 
-    elif choice == "2":                   # If user chooses to remove a task
-        task = input("Enter task to remove: ")   # Ask task name to remove
-        app.remove_task(task)                     # Call method to remove it
+# Get user input for refresh interval in seconds and convert to integer
+refresh = int(input("Enter refresh interval (seconds): "))
 
-    elif choice == "3":                   # If user chooses to show all tasks
-        app.show_tasks()                 # Display the list of tasks
+# Get latitude and longitude coordinates for the entered city
+lat, lon = get_location(city)
 
-    elif choice == "4":                   # If user wants to exit
-        print("Exiting...")               # Print exit message
-        break                             # Break loop → End program
+# Exit program if coordinates are not found
+if not lat:
+    exit()
 
-    else:                                 # If invalid menu option entered
-        print("Invalid choice! Try again.")   # Show error message
+# Start an infinite loop to fetch weather and show notifications repeatedly
+while True:
+    # Fetch current weather data for the given latitude and longitude
+    info = get_weather(lat, lon)
+
+    # Show the weather information as a desktop notification
+    notify(city, info)
+
+    # Wait for the specified refresh interval before fetching weather again
+    time.sleep(refresh)
